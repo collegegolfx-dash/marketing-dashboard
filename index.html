@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Coverage Dashboard — CGX · TUGR · Committed Golf</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans','Segoe UI',sans-serif;background:#0B0F1A;color:#E0E0E0;min-height:100vh;padding:24px 20px}
+button{font-family:inherit;cursor:pointer}
+h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;color:#fff}
+.header{margin-bottom:28px}
+.header-row{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.header-bar{width:4px;height:36px;background:linear-gradient(180deg,#43A047,#1565C0);border-radius:2px}
+.subtitle{margin:4px 0 0 16px;font-size:13px;color:#78909C}
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:#141926;border-radius:12px;padding:16px 18px;border:1px solid #1E2538;position:relative;overflow:hidden}
+.kpi-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-value{font-size:26px;font-weight:800;line-height:1}
+.kpi-label{font-size:12px;font-weight:600;color:#B0BEC5;margin-top:4px}
+.kpi-sub{font-size:11px;color:#546E7A;margin-top:2px}
+.banner{border-radius:10px;padding:12px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.banner-urgent{background:rgba(255,112,67,0.08);border:1px solid rgba(255,112,67,0.25)}
+.banner-budget{background:rgba(30,136,229,0.08);border:1px solid rgba(30,136,229,0.25)}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.view-tabs{display:flex;gap:4px;background:#141926;border-radius:8px;padding:3px}
+.view-tab{padding:7px 16px;border-radius:6px;border:none;font-size:12px;font-weight:600;background:transparent;color:#78909C;transition:all .2s}
+.view-tab.active{background:#1E88E5;color:#fff}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border-radius:6px;border:1px solid #1E2538;font-size:11px;font-weight:600;background:transparent;color:#78909C;transition:all .15s}
+.filter-btn.active{border-color:#1E88E5;background:rgba(30,136,229,0.12);color:#1E88E5}
+.matrix{background:#141926;border-radius:12px;border:1px solid #1E2538;overflow:hidden}
+.matrix-header,.matrix-row{display:grid;grid-template-columns:200px repeat(5,1fr) 70px}
+.matrix-header{border-bottom:2px solid #1E2538}
+.matrix-header div{padding:12px 8px;font-size:11px;font-weight:700;color:#546E7A;text-transform:uppercase;letter-spacing:.5px;text-align:center}
+.matrix-header div:first-child{text-align:left;padding-left:16px}
+.matrix-row{cursor:pointer;border-bottom:1px solid #1E2538;transition:background .15s}
+.matrix-row:hover{background:#1A2236!important}
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin:1px 2px;white-space:nowrap}
+.status-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700}
+.detail-panel{padding:14px 24px 14px 52px;background:#1A2236;border-bottom:1px solid #1E2538;display:none}
+.detail-panel.open{display:block}
+.detail-phases{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.detail-phase{background:#0B0F1A;border-radius:8px;padding:8px 12px;min-width:130px}
+.team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.team-card{background:#141926;border-radius:12px;padding:20px;border:1px solid #1E2538;position:relative;overflow:hidden}
+.team-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.load-bar{height:6px;background:#1E2538;border-radius:3px;overflow:hidden}
+.load-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.team-note{margin-top:10px;padding:6px 10px;border-radius:6px;font-size:11px}
+.gap-card{background:#141926;border-radius:12px;padding:16px 20px;border:1px solid #1E2538;display:grid;grid-template-columns:60px 1fr 1fr 120px 120px;gap:16px;align-items:center;margin-bottom:10px}
+.budget-table{background:#141926;border-radius:12px;border:1px solid #1E2538;overflow-x:auto}
+.budget-table table{width:100%;border-collapse:collapse;min-width:900px}
+.budget-table th{padding:10px 8px;font-size:11px;font-weight:700;color:#546E7A;text-transform:uppercase;text-align:right;border-bottom:2px solid #1E2538;position:sticky;top:0;background:#141926}
+.budget-table th:first-child,.budget-table th:nth-child(2){text-align:left}
+.budget-table td{padding:8px;font-size:12px;text-align:right;border-bottom:1px solid #1E2538}
+.budget-table td:first-child{text-align:left;font-weight:600;color:#E0E0E0}
+.budget-table td:nth-child(2){text-align:center}
+.budget-table td:last-child{text-align:left;font-size:11px;color:#90A4AE}
+.budget-table tr:hover{background:#1A2236}
+.budget-table .total-row td{background:#16213E;font-weight:700;color:#fff;border-top:2px solid #1E88E5}
+.brand-cgx{background:#1B5E20;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.brand-tugr{background:#1565C0;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.brand-cg{background:#2E7D32;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.brand-all{background:#1A1A2E;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.realloc{background:#FFE0B2;color:#E65100;padding:2px 6px;border-radius:4px;font-weight:700;font-size:10px}
+.footer{margin-top:24px;padding:16px 20px;background:#141926;border-radius:12px;border:1px solid #1E2538}
+.footer-roster{display:flex;gap:12px;flex-wrap:wrap}
+.roster-item{display:flex;align-items:center;gap:6px;padding:4px 10px;background:#0B0F1A;border-radius:8px;border:1px solid #1E2538}
+.hidden{display:none}
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.team-grid{grid-template-columns:1fr}.gap-card{grid-template-columns:50px 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="header-row"><div class="header-bar"></div><h1>Marketing Coverage Dashboard</h1></div>
+<p class="subtitle">CGX · TUGR · Committed Golf — Team capacity, channel coverage & budget allocation</p>
+</div>
+<div class="kpi-grid" id="kpiGrid"></div>
+<div class="banner banner-urgent">
+<span style="font-size:20px">⏰</span>
+<div><div style="font-size:13px;font-weight:700;color:#FF7043">Nick's team exits March 11</div><div style="font-size:11px;color:#FFAB91">Complete Klaviyo handoff. $5K/mo ($60K/yr) budget being reallocated.</div></div>
+</div>
+<div class="banner banner-budget">
+<span style="font-size:20px">💰</span>
+<div><div style="font-size:13px;font-weight:700;color:#1E88E5">$60K Budget Reallocation Under Discussion</div><div style="font-size:11px;color:#64B5F6">Nick's email execution budget freed up. Top candidates: fractional email specialist, fractional PPC, expanded social hours.</div></div>
+</div>
+<div class="controls">
+<div class="view-tabs" id="viewTabs"></div>
+<div class="filter-btns" id="filterBtns"></div>
+</div>
+<div id="matrixView"></div>
+<div id="teamView" class="hidden"></div>
+<div id="gapsView" class="hidden"></div>
+<div id="budgetView" class="hidden"></div>
+<div class="footer">
+<div style="font-size:12px;font-weight:700;color:#78909C;margin-bottom:8px">TEAM ROSTER</div>
+<div class="footer-roster" id="footerRoster"></div>
+</div>
+
+<script>
+const TEAM=[
+{name:"Jeff Hensiek",short:"Jeff",role:"Marketing Director",type:"FT",color:"#5C6BC0",budget:"$115,000"},
+{name:"Jessica Parker",short:"Jessica",role:"PT Content / Brand Voice",type:"PT",color:"#AB47BC",budget:"—"},
+{name:"Esther Lee",short:"Esther",role:"PT Social Media",type:"PT",color:"#26A69A",budget:"—"},
+{name:"Erika DeSanty",short:"Erika",role:"CGX Camp Operations",type:"FT",color:"#EF5350",budget:"—"},
+{name:"Matt Oliver",short:"Matt Oliver",role:"SEO Support",type:"CTR",color:"#4DB6AC",budget:"$3,600"},
+{name:"Jane Hopkinson-Wood",short:"Jane",role:"Design / Templates",type:"CTR",color:"#F48FB1",budget:"$7,000"},
+{name:"Ameer",short:"Ameer",role:"Landing Pages / Web",type:"CTR",color:"#78909C",budget:"—"},
+{name:"Anthony / Roody",short:"Anthony/Roody",role:"Developers (TUGR & CG)",type:"CTR",color:"#8D6E63",budget:"—"},
+{name:"Nick's Team",short:"Nick's Team",role:"Email (exits March 11)",type:"OUT",color:"#FF7043",budget:"$60,000 → REALLOC"},
+{name:"Ryan Noll",short:"Ryan Noll",role:"Freelance Video (high-end)",type:"CTR",color:"#FFB74D",budget:"$10,000 (CGX)"},
+{name:"Freelancers",short:"Freelancers",role:"Social/Creative/Video (various)",type:"CTR",color:"#BDBDBD",budget:"$30,000 combined"},
+{name:"Josh",short:"Josh",role:"Leadership / Partnerships",type:"FT",color:"#FF8A65",budget:"—"},
+{name:"KFPR",short:"KFPR",role:"PR Firm (external)",type:"CTR",color:"#7E57C2",budget:"$12,000"},
+];
+const STATUS={covered:{label:"Covered",color:"#43A047",bg:"#E8F5E9"},partial:{label:"Partial",color:"#F9A825",bg:"#FFF8E1"},gap:{label:"Gap",color:"#E53935",bg:"#FFEBEE"},transition:{label:"Transitioning",color:"#FB8C00",bg:"#FFF3E0"}};
+const CHANNELS=[
+{name:"Email Marketing",icon:"✉️",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Jessica","Jeff"],status:"partial"},execution:{owners:["Nick's Team","Jeff"],status:"transition",note:"Nick's team through March 11 → Jeff absorbs"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"transition",criticalNote:"P0: Nick's team through March 11. $60K budget being reallocated. Jeff absorbs short-term.",budget:"$13,800 platforms + $60K execution (reallocating)"},
+{name:"Social Media",icon:"📱",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Jessica","Esther"],status:"covered"},execution:{owners:["Esther"],status:"partial",note:"Need additional hours"},monitoring:{owners:["Esther","Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"Jessica owns voice. Esther executes. Budget available to expand hours. $30K freelancer budget across brands.",budget:"$30,000 freelancers across brands"},
+{name:"Paid Ads (Meta)",icon:"📊",phases:{strategy:{owners:["Jeff"],status:"partial",note:"Single owner"},content:{owners:["Jeff","Jessica"],status:"partial"},execution:{owners:["Jeff"],status:"partial",note:"No backup"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"P0: Jeff single point of failure. $61K combined Meta spend. Phase 2 conditional triggers built in.",budget:"CGX $40K + TUGR $7K + CG $14K = $61,000"},
+{name:"Paid Ads (Google)",icon:"🔍",phases:{strategy:{owners:["Jeff"],status:"partial"},content:{owners:["Jeff"],status:"partial"},execution:{owners:["Jeff"],status:"partial"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"P0: Same single-owner risk. $49K combined Google spend. CGX ramps Mar-Aug.",budget:"CGX $36K + TUGR $5K + CG $8K = $49,000"},
+{name:"Website / Landing Pages",icon:"🌐",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Jessica","Jeff"],status:"covered"},execution:{owners:["Ameer","Anthony/Roody"],status:"covered",note:"Ameer = landing pages; devs = platforms"},monitoring:{owners:["Jeff"],status:"covered"},reporting:{owners:["Jeff"],status:"covered"}},overallStatus:"covered",criticalNote:"Best-covered channel. Ameer on landing pages, devs on TUGR/CG platforms, Jessica on copy.",budget:"CGX $9K + TUGR $9.4K infra"},
+{name:"SEO & Blog",icon:"📝",phases:{strategy:{owners:["Jeff","Matt Oliver"],status:"covered"},content:{owners:["Jessica"],status:"covered"},execution:{owners:["Jessica","Ameer"],status:"partial"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"Matt Oliver on SEO support ($300/mo). Jessica writes across all 3 brands.",budget:"$3,600 (Matt Oliver)"},
+{name:"Partnerships & Sponsorships",icon:"🤝",phases:{strategy:{owners:["Josh"],status:"covered"},content:{owners:["Jeff","Jessica"],status:"covered"},execution:{owners:["Jeff"],status:"covered",note:"Jeff manages post-contract"},monitoring:{owners:["Jeff"],status:"covered"},reporting:{owners:["Jeff"],status:"covered"}},overallStatus:"covered",criticalNote:"Josh secures deals. Jeff manages post-contract. $15K budget (quarterly).",budget:"$15,000 (CGX)"},
+{name:"Video Content",icon:"🎬",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Esther","Ryan Noll","Freelancers"],status:"partial"},execution:{owners:["Ryan Noll","Freelancers"],status:"partial",note:"Ryan Noll high-end; freelancers for edits"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"Ryan Noll for high-end ($10K CGX). CG only $2K. TUGR Phase 2 conditional $2-3K.",budget:"CGX $10K + CG $2K + TUGR $2-3K conditional"},
+{name:"Design / Templates",icon:"🎨",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Jane"],status:"covered"},execution:{owners:["Jane"],status:"covered"},monitoring:{owners:["Jeff"],status:"covered"},reporting:{owners:["Jeff"],status:"covered"}},overallStatus:"covered",criticalNote:"Jane Hopkinson-Wood handles asset templates. Heaviest Jan-Mar + Sep-Dec.",budget:"CGX $5.5K + TUGR $500 + CG $1K = $7,000"},
+{name:"CRO / Page Testing",icon:"🧪",phases:{strategy:{owners:["Jeff"],status:"covered"},content:{owners:["Jeff","Ameer"],status:"partial"},execution:{owners:["Jeff","Ameer"],status:"partial"},monitoring:{owners:["Jeff"],status:"covered"},reporting:{owners:["Jeff"],status:"covered"}},overallStatus:"partial",criticalNote:"$5.4K CGX budget. Ramps Apr-Aug during peak camp discovery.",budget:"$5,400 (CGX)"},
+{name:"PR / Media Relations",icon:"📰",phases:{strategy:{owners:["Josh"],status:"covered"},content:{owners:["KFPR"],status:"covered"},execution:{owners:["KFPR"],status:"covered"},monitoring:{owners:["Jeff"],status:"covered"},reporting:{owners:["KFPR"],status:"covered"}},overallStatus:"covered",criticalNote:"KFPR at $1K/mo flat. Josh leads strategy. Jeff monitors.",budget:"$12,000"},
+{name:"SMS / Push",icon:"💬",phases:{strategy:{owners:[],status:"gap"},content:{owners:[],status:"gap"},execution:{owners:[],status:"gap"},monitoring:{owners:[],status:"gap"},reporting:{owners:[],status:"gap"}},overallStatus:"gap",criticalNote:"P2: Not established. Evaluate Klaviyo SMS for camp reminders + content drops.",budget:"$0 — not budgeted"},
+{name:"Analytics & Attribution",icon:"📈",phases:{strategy:{owners:["Jeff"],status:"partial"},content:{owners:[],status:"covered"},execution:{owners:["Jeff"],status:"partial"},monitoring:{owners:["Jeff"],status:"partial"},reporting:{owners:["Jeff"],status:"partial"}},overallStatus:"partial",criticalNote:"Jeff sole owner. No backup. Part of software/tools budget.",budget:"Included in software/tools ($16.3K)"},
+];
+const PHASES=["strategy","content","execution","monitoring","reporting"];
+const PHASE_LABELS={strategy:"Strategy",content:"Content",execution:"Execution",monitoring:"Monitoring",reporting:"Reporting"};
+const totalPhases=CHANNELS.length*5;
+
+const BUDGET_DATA=[
+{channel:"Marketing Director (Jeff)",brand:"All",months:[9583,9583,9583,9583,9583,9583,9583,9583,9583,9583,9583,9583],total:115000,note:"Strategy, analytics, creative direction, vendor mgmt"},
+{channel:"Email Platform",brand:"CGX",months:[650,650,650,650,650,650,650,650,650,650,650,650],total:7800,note:"Klaviyo"},
+{channel:"Email Platform",brand:"TUGR",months:[250,250,250,250,250,250,250,250,250,250,250,250],total:3000,note:""},
+{channel:"Email Platform",brand:"CG",months:[250,250,250,250,250,250,250,250,250,250,250,250],total:3000,note:""},
+{channel:"Email Execution (Nick)",brand:"CGX",months:[5000,5000,5000,5000,5000,5000,5000,5000,5000,5000,5000,5000],total:60000,note:"⚠️ BEING REALLOCATED",realloc:true},
+{channel:"Google Ads",brand:"CGX",months:[1000,1000,3000,4000,5000,5000,5000,5000,1000,2000,2000,2000],total:36000,note:"Ramps Mar-Aug"},
+{channel:"Google Ads",brand:"TUGR",months:[250,300,375,500,550,600,600,450,425,425,350,175],total:5000,note:""},
+{channel:"Google Ads",brand:"CG",months:[200,1000,1000,1000,800,500,500,500,700,800,700,300],total:8000,note:"Heaviest Jan-Apr"},
+{channel:"Paid Social (Meta)",brand:"CGX",months:[1500,2000,3000,5000,5500,5500,4500,2500,2500,2500,3000,2500],total:40000,note:"Phase 2: +$2.5K if ROAS≥3x"},
+{channel:"Paid Social (Meta)",brand:"TUGR",months:[350,400,600,700,750,800,800,700,600,550,450,300],total:7000,note:""},
+{channel:"Paid Social (Meta)",brand:"CG",months:[500,2000,2000,2000,1000,800,650,650,1000,1100,1100,1200],total:14000,note:"Phase 2/3 conditional"},
+{channel:"Social/Creative Freelancers",brand:"CGX",months:[1500,1500,1500,1500,1500,1500,1500,1500,1500,1500,1500,1500],total:18000,note:"Camp pages + social"},
+{channel:"Social/Creative Freelancers",brand:"TUGR",months:[200,200,300,500,600,800,800,750,400,450,500,500],total:6000,note:"Ramps summer"},
+{channel:"Social/Creative Freelancers",brand:"CG",months:[500,500,500,500,500,500,500,500,500,500,500,500],total:6000,note:""},
+{channel:"Video (Ryan Noll+)",brand:"CGX",months:[300,300,400,600,700,2000,500,300,400,500,2000,2000],total:10000,note:"High-end; ramps Jun+Nov-Dec"},
+{channel:"Video / Photo",brand:"CG",months:[0,0,500,500,0,0,0,0,0,0,500,500],total:2000,note:"Launch + year-end"},
+{channel:"Design (Jane H-W)",brand:"CGX",months:[1000,1000,500,500,500,0,0,0,500,500,500,500],total:5500,note:""},
+{channel:"Design (Jane H-W)",brand:"TUGR",months:[0,0,250,250,0,0,0,0,0,0,0,0],total:500,note:"Mar-Apr"},
+{channel:"Design (Jane H-W)",brand:"CG",months:[0,0,500,500,0,0,0,0,0,0,0,0],total:1000,note:"Mar-Apr"},
+{channel:"SEO (Matt Oliver)",brand:"CGX",months:[300,300,300,300,300,300,300,300,300,300,300,300],total:3600,note:"$300/mo flat"},
+{channel:"CRO / Page Testing",brand:"CGX",months:[250,250,250,650,650,650,650,650,350,350,350,350],total:5400,note:"Ramps Apr-Aug"},
+{channel:"PR (KFPR)",brand:"All",months:[1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000],total:12000,note:"$1K/mo flat"},
+{channel:"Website Infrastructure",brand:"CGX",months:[1404,688,688,688,688,688,688,688,688,688,688,688],total:8966,note:""},
+{channel:"Website",brand:"TUGR",months:[1152,746,746,746,746,746,746,746,746,746,746,746],total:9356,note:""},
+{channel:"Software / Tools",brand:"CGX",months:[1004,1004,1004,1004,1004,1004,1004,1004,1004,1004,1004,1004],total:12050,note:""},
+{channel:"Software / Tools",brand:"TUGR",months:[197,197,197,197,197,197,197,197,197,197,197,197],total:2360,note:""},
+{channel:"Software / Tools",brand:"CG",months:[158,158,158,158,158,158,158,158,158,158,158,158],total:1900,note:""},
+{channel:"Sponsorships",brand:"CGX",months:[5000,0,5000,0,0,5000,0,0,0,0,0,0],total:15000,note:"Quarterly"},
+];
+
+let currentView="matrix",currentFilter="all",selectedChannel=null;
+const MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function getTeam(n){return TEAM.find(t=>t.short===n||t.name===n)}
+function pill(n){const m=getTeam(n);const c=m?m.color:"#9E9E9E";return`<span class="pill" style="background:${c}20;color:${c};border:1px solid ${c}40">${n}</span>`}
+function badge(s){const st=STATUS[s];return`<span class="status-badge" style="background:${st.bg};color:${st.color}">${st.label}</span>`}
+function fmt(n){return n>=1000?'$'+n.toLocaleString():'$'+n}
+function brandBadge(b){if(b==="CGX")return'<span class="brand-cgx">CGX</span>';if(b==="TUGR")return'<span class="brand-tugr">TUGR</span>';if(b==="CG")return'<span class="brand-cg">CG</span>';return'<span class="brand-all">All</span>'}
+
+function jeffLoad(){let c=0;CHANNELS.forEach(ch=>{Object.values(ch.phases).forEach(p=>{if(p.owners.includes("Jeff"))c++})});return c}
+function statusCounts(){const c={covered:0,partial:0,gap:0,transition:0};CHANNELS.forEach(ch=>c[ch.overallStatus]++);return c}
+
+function renderKPIs(){
+const sc=statusCounts(),jl=jeffLoad(),jp=Math.round(jl/totalPhases*100);
+const kpis=[
+{label:"Total Budget",value:"$418K",sub:"Base (excl. Phase 2)",accent:"#90CAF9"},
+{label:"Channels",value:CHANNELS.length,sub:"Tracked",accent:"#64B5F6"},
+{label:"Covered",value:sc.covered,sub:"Fully staffed",accent:"#43A047"},
+{label:"Partial",value:sc.partial+sc.transition,sub:"Needs attention",accent:"#F9A825"},
+{label:"Gaps",value:sc.gap,sub:"No coverage",accent:"#E53935"},
+{label:"Jeff Load",value:jp+"%",sub:jl+"/"+totalPhases+" phases",accent:jp>60?"#E53935":"#F9A825"},
+];
+document.getElementById("kpiGrid").innerHTML=kpis.map(k=>`<div class="kpi-card"><div class="kpi-bar" style="background:${k.accent}"></div><div class="kpi-value" style="color:${k.accent}">${k.value}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join("")}
+
+function renderControls(){
+const views=[["matrix","Coverage Matrix"],["team","Team Load"],["budget","Budget"],["gaps","Gap Analysis"]];
+document.getElementById("viewTabs").innerHTML=views.map(([v,l])=>`<button class="view-tab ${currentView===v?'active':''}" onclick="switchView('${v}')">${l}</button>`).join("");
+if(currentView==="matrix"){
+const filters=[["all","All"],["covered","Covered"],["partial","Partial"],["gap","Gap"],["transition","Transitioning"]];
+document.getElementById("filterBtns").innerHTML=filters.map(([f,l])=>`<button class="filter-btn ${currentFilter===f?'active':''}" onclick="setFilter('${f}')">${l}</button>`).join("")}
+else{document.getElementById("filterBtns").innerHTML=""}}
+
+function renderMatrix(){
+const filtered=currentFilter==="all"?CHANNELS:CHANNELS.filter(c=>c.overallStatus===currentFilter);
+let h=`<div class="matrix"><div class="matrix-header"><div>Channel</div>`;
+PHASES.forEach(p=>{h+=`<div>${PHASE_LABELS[p]}</div>`});h+=`<div>Status</div></div>`;
+filtered.forEach((ch,i)=>{
+const sel=selectedChannel===ch.name;const bg=sel?"#1A2236":i%2===0?"#141926":"#161C2E";
+h+=`<div class="matrix-row" style="background:${bg}" onclick="toggleChannel('${ch.name}')">`;
+h+=`<div style="padding:14px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">${ch.icon}</span><span style="font-size:13px;font-weight:600">${ch.name}</span></div>`;
+PHASES.forEach(p=>{const phase=ch.phases[p];h+=`<div style="padding:10px 8px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px">${phase.owners.length?phase.owners.map(o=>pill(o)).join(""):'<span style="font-size:11px;color:#546E7A;font-style:italic">—</span>'}</div>`});
+h+=`<div style="padding:14px 8px;display:flex;justify-content:center;align-items:center">${badge(ch.overallStatus)}</div></div>`;
+const nc=ch.overallStatus==="gap"?"#EF9A9A":ch.overallStatus==="transition"?"#FFCC80":"#B0BEC5";
+h+=`<div class="detail-panel ${sel?'open':''}"><div style="font-size:12px;color:${nc};line-height:1.5;margin-bottom:4px"><strong style="color:#fff">Assessment:</strong> ${ch.criticalNote}</div>`;
+if(ch.budget)h+=`<div style="font-size:11px;color:#64B5F6;margin-bottom:8px">💰 <strong>Budget:</strong> ${ch.budget}</div>`;
+h+=`<div class="detail-phases">`;
+PHASES.forEach(p=>{const phase=ch.phases[p];const s=STATUS[phase.status];h+=`<div class="detail-phase" style="border:1px solid ${s.color}30"><div style="font-size:10px;color:#78909C;font-weight:600;text-transform:uppercase;margin-bottom:4px">${PHASE_LABELS[p]}</div><div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${s.color}"></span><span style="font-size:11px;color:${s.color};font-weight:600">${s.label}</span></div>${phase.note?`<div style="font-size:10px;color:#90A4AE;margin-top:4px;font-style:italic">${phase.note}</div>`:""}</div>`});
+h+=`</div></div>`});
+h+=`</div>`;document.getElementById("matrixView").innerHTML=h}
+
+function renderTeam(){
+let h='<div class="team-grid">';
+TEAM.forEach(m=>{
+const sn=m.short;let cc=0,pc=0;
+CHANNELS.forEach(ch=>{let f=false;Object.values(ch.phases).forEach(p=>{if(p.owners.includes(sn)){pc++;f=true}});if(f)cc++});
+const lp=Math.round(pc/totalPhases*100),ol=lp>40,ex=m.type==="OUT";
+const bc=ex?"rgba(255,112,67,0.25)":ol?"rgba(229,57,53,0.25)":"#1E2538";
+const tb=ex?"rgba(255,112,67,0.12)":m.type==="FT"?"rgba(30,136,229,0.12)":m.type==="PT"?"rgba(171,71,188,0.12)":"rgba(120,144,156,0.12)";
+const tc=ex?"#FF7043":m.type==="FT"?"#1E88E5":m.type==="PT"?"#AB47BC":"#78909C";
+const tl=ex?"Exits Mar 11":m.type;
+const vc=ol?"#E53935":m.color;
+const bb=ol?"linear-gradient(90deg,#E53935,#FF7043)":`linear-gradient(90deg,${m.color},${m.color}80)`;
+h+=`<div class="team-card" style="border-color:${bc}"><div class="team-bar" style="background:${m.color}"></div>`;
+h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div><div style="font-size:17px;font-weight:700;color:#fff">${m.name}</div><div style="font-size:12px;color:#78909C">${m.role}</div></div><span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;background:${tb};color:${tc}">${tl}</span></div>`;
+h+=`<div style="display:flex;gap:20px;margin-bottom:12px"><div><div style="font-size:22px;font-weight:800;color:${vc}">${lp}%</div><div style="font-size:10px;color:#546E7A">of phases</div></div><div><div style="font-size:22px;font-weight:800;color:#B0BEC5">${cc}</div><div style="font-size:10px;color:#546E7A">channels</div></div><div><div style="font-size:22px;font-weight:800;color:#B0BEC5">${pc}</div><div style="font-size:10px;color:#546E7A">phase slots</div></div>`;
+if(m.budget&&m.budget!=="—")h+=`<div><div style="font-size:16px;font-weight:800;color:#64B5F6">${m.budget.split('→')[0].trim()}</div><div style="font-size:10px;color:#546E7A">${m.budget.includes('REALLOC')?'REALLOCATING':'annual budget'}</div></div>`;
+h+=`</div><div class="load-bar"><div class="load-fill" style="width:${Math.min(lp,100)}%;background:${bb}"></div></div>`;
+if(ol)h+=`<div class="team-note" style="background:rgba(229,57,53,0.06);color:#EF9A9A;border:1px solid rgba(229,57,53,0.12)">⚠️ Capacity risk — single point of failure</div>`;
+if(sn==="Jessica")h+=`<div class="team-note" style="background:rgba(171,71,188,0.06);color:#CE93D8;border:1px solid rgba(171,71,188,0.12)">Minor ramp-up — CG launch experience, now all 3 brands</div>`;
+if(sn==="Esther")h+=`<div class="team-note" style="background:rgba(38,166,154,0.06);color:#80CBC4;border:1px solid rgba(38,166,154,0.12)">💰 Budget available to expand social media hours</div>`;
+if(ex)h+=`<div class="team-note" style="background:rgba(255,112,67,0.06);color:#FFAB91;border:1px solid rgba(255,112,67,0.12)">💰 $60K/yr budget being reallocated — top candidates: fractional email, PPC, social hours</div>`;
+h+=`</div>`});
+h+='</div>';document.getElementById("teamView").innerHTML=h}
+
+function renderBudget(){
+let h=`<div class="budget-table"><table><thead><tr><th style="text-align:left">Channel</th><th style="text-align:left">Brand</th>`;
+MO.forEach(m=>{h+=`<th>${m}</th>`});
+h+=`<th>Annual</th><th style="text-align:left">Notes</th></tr></thead><tbody>`;
+let monthTotals=new Array(12).fill(0),grandTotal=0;
+BUDGET_DATA.forEach((r,i)=>{
+const bg=i%2===0?"":"background:#161C2E;";
+h+=`<tr style="${bg}"><td>${r.channel}</td><td>${brandBadge(r.brand)}</td>`;
+r.months.forEach((v,mi)=>{monthTotals[mi]+=v;const c=v===0?"color:#546E7A":v>=5000?"color:#E53935;font-weight:600":v>=2000?"color:#F9A825":"color:#B0BEC5";h+=`<td style="${c}">${v===0?'—':fmt(v)}</td>`});
+grandTotal+=r.total;
+h+=`<td style="color:#1E88E5;font-weight:700">${fmt(r.total)}</td>`;
+h+=`<td>${r.realloc?'<span class="realloc">⚠️ REALLOCATING</span>':r.note||''}</td></tr>`});
+h+=`<tr class="total-row"><td>TOTAL</td><td></td>`;
+monthTotals.forEach(v=>{h+=`<td>${fmt(Math.round(v))}</td>`});
+h+=`<td>${fmt(grandTotal)}</td><td>Base budget (excl. Phase 2 conditional)</td></tr>`;
+h+=`</tbody></table></div>`;
+document.getElementById("budgetView").innerHTML=h}
+
+function renderGaps(){
+const gaps=[
+{priority:"P0",color:"#E53935",title:"Email — Nick exits March 11",desc:"All 3 brands lose execution. Klaviyo unmanaged. $60K freed up.",solution:"Complete handoff by 3/11. Jeff absorbs → fractional email specialist or train Jessica",cost:"$1.5-3K/mo",timeline:"By March 11",source:"Nick's $60K reallocation"},
+{priority:"P0",color:"#E53935",title:"Jeff overload / single point of failure",desc:"$110K+ in paid ads, analytics, email, partnerships all through Jeff alone.",solution:"Fractional PPC specialist for Meta + Google Ads",cost:"$2.5-5K/mo",timeline:"Before peak season",source:"Nick's $60K reallocation"},
+{priority:"P0",color:"#E53935",title:"$60K Budget Reallocation",desc:"Nick's $5K/mo freed up. Highest-impact deployment needed across gaps.",solution:"Split: fractional email ($1.5-3K) + fractional PPC ($2.5-5K) + expanded social hours",cost:"Up to $5K/mo",timeline:"Immediate",source:"Self-funding from Nick line"},
+{priority:"P1",color:"#FB8C00",title:"Social media hours — expand",desc:"Esther PT across 3 brands. Daily posting + community mgmt exceeds capacity.",solution:"Increase Esther's hours or add PT social person",cost:"Budget available",timeline:"Immediate",source:"Existing social + reallocation"},
+{priority:"P1",color:"#FB8C00",title:"Video execution pipeline",desc:"Ryan Noll ad-hoc. CG only $2K video budget. No consistent pipeline.",solution:"Formalize Ryan Noll retainer; establish freelancer bench",cost:"$2-4K/mo peak",timeline:"Before camp season",source:"Existing video budgets ($12K)"},
+{priority:"P2",color:"#F9A825",title:"SMS / push not established",desc:"$0 budgeted. Missing high-conversion channel.",solution:"Evaluate Klaviyo SMS",cost:"New line item",timeline:"Q3 2026",source:"TBD"},
+{priority:"P2",color:"#F9A825",title:"Analytics — no backup",desc:"Jeff sole owner GA4/UTMs. No redundancy.",solution:"Document GA4; train Jessica or Erika",cost:"$0",timeline:"Q2 2026",source:"Internal time"},
+{priority:"P2",color:"#F9A825",title:"Phase 2 conditional triggers",desc:"CGX +$20K if ROAS≥3x. CG +$6-8K if CPA≤$20. TUGR +$2-3K if CPA≤$18.",solution:"Monitor; activate when thresholds met",cost:"$28-31K conditional",timeline:"Performance-gated",source:"Already budgeted conditionally"},
+];
+let h='';gaps.forEach(g=>{
+h+=`<div class="gap-card"><div style="text-align:center"><span style="display:inline-block;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:800;background:${g.color}20;color:${g.color}">${g.priority}</span></div>`;
+h+=`<div><div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px">${g.title}</div><div style="font-size:12px;color:#90A4AE;line-height:1.4">${g.desc}</div></div>`;
+h+=`<div><div style="font-size:10px;color:#546E7A;font-weight:600;text-transform:uppercase;margin-bottom:3px">Recommendation</div><div style="font-size:12px;color:#B0BEC5;line-height:1.4">${g.solution}</div><div style="font-size:10px;color:#64B5F6;margin-top:4px">Source: ${g.source}</div></div>`;
+h+=`<div style="text-align:center"><div style="font-size:10px;color:#546E7A;font-weight:600;text-transform:uppercase;margin-bottom:3px">Est. Cost</div><div style="font-size:12px;color:#E0E0E0;font-weight:600">${g.cost}</div></div>`;
+h+=`<div style="text-align:center"><div style="font-size:10px;color:#546E7A;font-weight:600;text-transform:uppercase;margin-bottom:3px">Timeline</div><div style="font-size:12px;font-weight:600;color:${g.color}">${g.timeline}</div></div></div>`});
+document.getElementById("gapsView").innerHTML=h}
+
+function renderFooter(){
+document.getElementById("footerRoster").innerHTML=TEAM.map(m=>`<div class="roster-item"><div style="width:8px;height:8px;border-radius:50%;background:${m.color}"></div><span style="font-size:11px;font-weight:600;color:#B0BEC5">${m.name}</span><span style="font-size:10px;color:#546E7A">— ${m.role}</span></div>`).join("")}
+
+function switchView(v){
+currentView=v;
+["matrixView","teamView","gapsView","budgetView"].forEach(id=>{document.getElementById(id).classList.toggle("hidden",id!==v+"View")});
+renderControls()}
+function setFilter(f){currentFilter=f;renderControls();renderMatrix()}
+function toggleChannel(n){selectedChannel=selectedChannel===n?null:n;renderMatrix()}
+
+renderKPIs();renderControls();renderMatrix();renderTeam();renderBudget();renderGaps();renderFooter();
+</script>
+</body>
+</html>
